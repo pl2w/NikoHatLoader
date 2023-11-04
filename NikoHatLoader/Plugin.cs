@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Configuration;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,15 @@ namespace NikoHatLoader
     [BepInPlugin("pl2w.nikohatloader", "NikoHatLoader", "1.0.0")]
     public class Plugin : BaseUnityPlugin
     {
-        Plugin() => new Harmony("pl2w.nikohatloader").PatchAll(Assembly.GetExecutingAssembly());
+        public static Plugin instance;
+        Plugin()
+        {
+            instance = this;
+            new Harmony("pl2w.nikohatloader").PatchAll(Assembly.GetExecutingAssembly());
+        }
         static GameObject hat, scarf;
-        public static void OnLoad()
+
+        public void OnLoad()
         {
             Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("NikoHatLoader.Resources.nikohat");
             AssetBundle bundle = AssetBundle.LoadFromStream(stream);
@@ -33,6 +40,8 @@ namespace NikoHatLoader
             scarf.transform.localPosition = new Vector3(0, 0.025f, 0);
 
             bundle.Unload(false);
+
+            if(Config.Bind("General", "DisableScarf", false, "Disable the scarf.").Value) GameObject.Destroy(scarf);
         }
 
         public void OnDisable()
@@ -53,7 +62,7 @@ namespace NikoHatLoader
     {
         public static void Postfix()
         {
-            Plugin.OnLoad();
+            Plugin.instance.OnLoad();
         }
     }
 }
