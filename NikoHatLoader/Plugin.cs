@@ -1,5 +1,4 @@
 ﻿using BepInEx;
-using GorillaUtils.Events;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
